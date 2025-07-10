@@ -1,0 +1,47 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus 自身监控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Loki 指标监控
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+
+  # Grafana 指标监控
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+
+  # Node Exporter (如果安装了)
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['localhost:9100']
+
+  # TEE组件指标（如果组件暴露了/metrics端点）
+  - job_name: 'grpc-server'
+    static_configs:
+      - targets: ['host.docker.internal:9091']  # 假设暴露在9091端口
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  - job_name: 'cli-rpc'
+    static_configs:
+      - targets: ['host.docker.internal:9092']  # 假设暴露在9092端口
+    scrape_interval: 10s
+    metrics_path: /metrics
+
+  - job_name: 'proxy'
+    static_configs:
+      - targets: ['host.docker.internal:9093']  # 假设暴露在9093端口
+    scrape_interval: 10s
+    metrics_path: /metrics 

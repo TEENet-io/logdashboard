@@ -1,0 +1,34 @@
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    uid: loki_uid
+    isDefault: true
+    jsonData:
+      maxLines: 1000
+      manageAlerts: true
+      alertmanagerUid: alertmanager_uid
+      httpHeaderName1: 'X-Scope-OrgID'
+    secureJsonData:
+      httpHeaderValue1: 'tenant1'
+    editable: true
+
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    uid: prometheus_uid
+    isDefault: false
+    jsonData:
+      manageAlerts: true
+      alertmanagerUid: alertmanager_uid
+      prometheusType: Prometheus
+      prometheusVersion: 2.47.0
+      cacheLevel: 'High'
+      disableMetricsLookup: false
+      incrementalQuerying: false
+      exemplarTraceIdDestinations: []
+    editable: true 

@@ -1,0 +1,263 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  # rpc-server 日志
+  - job_name: rpc-server
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: rpc-server
+          component: rpc-server
+          module: rpc
+          environment: production
+          __path__: /var/log/tee-proxy/rpc-server*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+          
+  # tee-dao 日志
+  - job_name: tee-dao
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: tee-dao
+          component: tee-dao
+          module: database
+          environment: production
+          __path__: /var/log/tee-proxy/tee-dao*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # tee-mersh 日志
+  - job_name: tee-mersh
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: tee-mersh
+          component: tee-mersh
+          module: mesh
+          environment: production
+          __path__: /var/log/tee-proxy/tee-mersh*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # grpc-server 日志（保留用于兼容性）
+  - job_name: grpc-server
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: grpc-server
+          component: grpc-server
+          environment: production
+          __path__: /var/log/tee-proxy/grpc-server*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # cli-rpc 日志
+  - job_name: cli-rpc
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: cli-rpc
+          component: cli-rpc
+          environment: production
+          __path__: /var/log/tee-proxy/cli-rpc*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+          
+  # proxy 日志
+  - job_name: proxy
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: proxy
+          component: proxy
+          environment: production
+          __path__: /var/log/tee-proxy/proxy*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # admin-cli 日志
+  - job_name: admin-cli
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: admin-cli
+          component: admin-cli
+          environment: production
+          __path__: /var/log/tee/admin-cli*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # grpc-client 日志
+  - job_name: grpc-client
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: grpc-client
+          component: grpc-client
+          environment: production
+          __path__: /var/log/tee/grpc-client*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # cli-rpc-client 日志
+  - job_name: cli-rpc-client
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: cli-rpc-client
+          component: cli-rpc-client
+          environment: production
+          __path__: /var/log/tee/cli-rpc-client*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # user-rpc 日志
+  - job_name: user-rpc
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: user-rpc
+          component: user-rpc
+          environment: production
+          __path__: /var/log/tee/user-rpc*.log
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'
+          max_wait_time: 3s
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?P<level>\w+)\s+(?P<logger>[\w\-\.]+)\s+(?P<message>.*?)(\s+(?P<fields>\{.*\}))?$'
+      - timestamp:
+          source: timestamp
+          format: RFC3339Nano
+      - labels:
+          level: level
+          logger: logger
+
+  # 系统日志（可选）
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: system
+          component: system
+          environment: production
+          __path__: /var/log/syslog
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<hostname>\S+)\s+(?P<service>\S+):\s*(?P<message>.*)'
+      - timestamp:
+          source: timestamp
+          format: 'Jan 2 15:04:05'
+      - labels:
+          hostname: hostname
+          service: service 

@@ -1,0 +1,106 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://YOUR_CENTRAL_SERVER_IP:3100/loki/api/v1/push
+
+scrape_configs:
+  # TEE gRPC Server 日志
+  - job_name: grpc-server
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: grpc-server
+          component: grpc-server
+          environment: production
+          node_id: "${NODE_ID:-unknown}"
+          datacenter: "${DATACENTER:-default}"
+          __path__: /var/log/tee/grpc-server*.log
+
+    # 多行日志处理（JSON格式）
+    pipeline_stages:
+      - json:
+          expressions:
+            timestamp: timestamp
+            level: level
+            component: component
+            message: message
+            request_id: request_id
+            node_id: node_id
+      
+      - labels:
+          level:
+          component:
+          request_id:
+          node_id:
+      
+      - timestamp:
+          source: timestamp
+          format: "2006-01-02T15:04:05.000Z"
+          fallback_formats:
+            - "2006-01-02T15:04:05-07:00"
+            - RFC3339
+
+  # TEE CLI RPC 日志
+  - job_name: cli-rpc
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: cli-rpc
+          component: cli-rpc
+          environment: production
+          node_id: "${NODE_ID:-unknown}"
+          datacenter: "${DATACENTER:-default}"
+          __path__: /var/log/tee/cli-rpc*.log
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2})\s+(?P<level>\w+)\s+(?P<component>[\w-]+)\s+(?P<message>.*?)(?:\s+(?P<json>\{.*\}))?$'
+      
+      - labels:
+          level:
+          component:
+      
+      - timestamp:
+          source: timestamp
+          format: "2006-01-02T15:04:05-07:00"
+
+  # TEE Proxy 日志
+  - job_name: proxy
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: proxy
+          component: proxy
+          environment: production
+          node_id: "${NODE_ID:-unknown}"
+          datacenter: "${DATACENTER:-default}"
+          __path__: /var/log/tee/proxy*.log
+
+  # 系统日志（可选）
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: system
+          component: system
+          environment: production
+          node_id: "${NODE_ID:-unknown}"
+          datacenter: "${DATACENTER:-default}"
+          __path__: /var/log/syslog
+
+    pipeline_stages:
+      - regex:
+          expression: '^(?P<timestamp>\w+\s+\d+\s+\d+:\d+:\d+)\s+(?P<hostname>\S+)\s+(?P<program>\S+):\s+(?P<message>.*)'
+      
+      - labels:
+          hostname:
+          program: 
