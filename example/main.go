@@ -2,8 +2,9 @@ package main
 
 import (
 	"errors"
-	"logdashboard/pkg/log"
 	"time"
+
+	"github.com/TEENet-io/logdashboard/pkg/log"
 )
 
 func main() {

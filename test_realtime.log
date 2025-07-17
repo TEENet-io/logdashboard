@@ -1,9 +1,0 @@
-[2025-07-10 09:55:23] {"Level":"info","Message":"实时日志测试开始","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"timestamp":"2025-07-10T09:55:23+08:00"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"error","Message":"这是一条错误日志","Labels":{"env":"test","level":"error","service":"test-realtime","version":"1.0.0"},"Fields":{"error_code":500,"message":"测试错误信息"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"warn","Message":"这是一条警告日志","Labels":{"env":"test","level":"warn","service":"test-realtime","version":"1.0.0"},"Fields":{"threshold":90,"warning_type":"performance"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"info","Message":"这是一条信息日志","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"action":"view_dashboard","user_id":"test_user"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"debug","Message":"这是一条调试日志","Labels":{"env":"test","level":"debug","service":"test-realtime","version":"1.0.0"},"Fields":{"debug_info":"realtime_test"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"info","Message":"循环日志","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"loop_index":1,"test_type":"realtime"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"info","Message":"循环日志","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"loop_index":2,"test_type":"realtime"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"info","Message":"循环日志","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"loop_index":3,"test_type":"realtime"},"Time":1752112523}
-[2025-07-10 09:55:23] {"Level":"info","Message":"实时日志测试结束","Labels":{"env":"test","level":"info","service":"test-realtime","version":"1.0.0"},"Fields":{"total_logs":8},"Time":1752112523}

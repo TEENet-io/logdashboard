@@ -1,3 +1,0 @@
-{"Level":"info","Message":"this is an info log","Labels":{"env":"test","feature":"label-demo","host":"localhost","service":"testservice"},"Fields":{"action":"login","user":"alice"},"Time":1752110189}
-{"Level":"warn","Message":"this is a warning log","Labels":{"env":"test","feature":"label-demo","host":"localhost","service":"testservice"},"Fields":{"action":"logout","user":"bob"},"Time":1752110189}
-{"Level":"error","Message":"this is an error log","Labels":{"env":"test","feature":"label-demo","host":"localhost","service":"testservice"},"Fields":{"action":"fail","user":"carol"},"Time":1752110189}
